@@ -1,0 +1,22 @@
+.web3modal-modal-card {
+  font-family: monospace !important;
+  background-color: rgba(20, 20, 22, 0.5) !important;
+  backdrop-filter: blur(10px);
+}
+
+.web3modal-provider-name {
+  color: #fff !important;
+}
+
+.web3modal-provider-wrapper {
+  border: none !important;
+}
+
+.web3modal-provider-container {
+  background: none !important;
+}
+
+.web3modal-provider-container:hover {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  text-shadow: 0 0 32px rgba(255, 255, 255, 0.33);
+}

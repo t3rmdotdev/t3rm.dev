@@ -1,0 +1,33 @@
+:root {
+  color-scheme: dark;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html {
+  background: #000;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+main,
+#term,
+.xterm {
+  height: 100vh;
+  width: 100vw;
+}
+
+.xterm {
+  padding: 1rem;
+}
+
+.xterm-screen {
+  z-index: 0;
+}
