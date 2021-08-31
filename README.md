@@ -1,4 +1,4 @@
-<h1><p align="center">t3rm - Interplanetary web3 terminal</p></h1>
+<h1><p align="center">t3rm.dev - Interplanetary web3 terminal</p></h1>
 <p align="center"><img width="360" height="360" src="https://user-images.githubusercontent.com/89753866/131451030-bf955dc7-d1b7-4598-9cb5-8ddbc5d2bee9.png" alt="t3rm.dev logo" /></p>
 
 ## Guide: Minting an NFT on t3rm.dev:
