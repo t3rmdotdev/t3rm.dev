@@ -79,13 +79,13 @@ const web3Modal = new window.Web3Modal.default({
     walletconnect: {
       package: window.WalletConnectProvider.default,
       options: {
-        infuraId: "",
+        infuraId: "ba6069f6c1ff4bf6aa61f438e4e0fa8f",
       },
     },
     fortmatic: {
       package: window.Fortmatic,
       options: {
-        key: "",
+        key: "pk_live_6C8DA04280AA9E7D",
       },
     },
   },
