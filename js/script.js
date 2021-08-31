@@ -190,39 +190,6 @@ const disconnect = async () => {
 };
 
 const cmds = {
-  "1dca": async (firstRun, args) => {
-    const ruleNumber = Number(args[0]) || 30;
-    const size = t3rm.cols;
-    const symbols = [" ", "█"];
-    const bits = (r) =>
-      [...new Array(8)]
-        .map((_, i) => Number((r & (2 ** i)) === 2 ** i))
-        .reverse();
-    const newRow = () => [...new Array(size)].map((_) => 0);
-    const render = (row) => row.map((n) => symbols[n]).join("");
-    const rule = bits(ruleNumber % 256);
-
-    const applyRule = (row) => {
-      const rowNext = newRow();
-      for (let i = 1; i < row.length - 1; i++) {
-        const [l, c, r] = [row[i - 1], row[i], row[i + 1]];
-        let n = 0;
-        if (r) n += 1;
-        if (c) n += 2;
-        if (l) n += 4;
-        rowNext[i] = rule[7 - n];
-      }
-      return rowNext;
-    };
-    let row = newRow();
-    row[Math.floor(size / 2)] = 1;
-    const delay = async (n) => new Promise((r) => setTimeout(r, n));
-    while (state.t3rm.run) {
-      await delay(50);
-      if (state.t3rm.run) t3rm.writeln(render(row));
-      row = applyRule(row);
-    }
-  },
   connect: async () => {
     const updateChain = async () => {
       state.web3.chainId = await web3.eth.getChainId();
@@ -768,7 +735,7 @@ const defaultOnDataHandler = async (data) => {
       await onCmd(state.t3rm.line);
       state.t3rm.line = "";
 
-      if (!run) {
+      if (!state.t3rm.run) {
         state.t3rm.cmdIdx = -1;
         state.t3rm.cursor = 0;
       }
