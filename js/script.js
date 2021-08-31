@@ -615,7 +615,7 @@ const onCmd = async (data) => {
     return;
   }
   state.t3rm.run = cmd;
-  cmds[cmd](true, args.slice(1));
+  return cmds[cmd](true, args.slice(1));
 };
 
 const defaultOnKeyHandler = async ({ key, domEvent }) => {
@@ -733,11 +733,11 @@ const defaultOnDataHandler = async (data) => {
 
       t3rm.writeln("");
       await onCmd(state.t3rm.line);
-      state.t3rm.line = "";
 
       if (!state.t3rm.run) {
         state.t3rm.cmdIdx = -1;
         state.t3rm.cursor = 0;
+        state.t3rm.line = "";
       }
       break;
     }
