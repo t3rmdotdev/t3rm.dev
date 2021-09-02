@@ -99,7 +99,7 @@ const t3rm = new Terminal({
   scrollback: 64,
 });
 
-const bundle = "dev.t3rm.";
+let bundle = "dev.t3rm.";
 
 const setup = async () => {
   t3rm.open(document.getElementById("t3rm"));
