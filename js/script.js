@@ -174,6 +174,8 @@ const clear = (screen) => {
 const exit = () => {
   state.t3rm.run = null;
   state.t3rm.prompt = "🔥 ";
+  state.t3rm.line = ''
+  state.t3rm.cursor = 0
   clear();
   t3rm.write(state.t3rm.prompt);
 };
