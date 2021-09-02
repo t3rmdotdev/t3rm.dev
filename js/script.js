@@ -480,7 +480,7 @@ const cmds = {
       t3rm.writeln("");
       t3rm.writeln(`Type ${c.yellowBright("LIST")} to hack the galaxy.\n`);
       return exit();
-    } else if (args[0] === "pkg") {
+    } else if (args[0] === "pkg" && args.length === 2) {
       try {
         const tokenID = await state.web3.t3rm.token(args[1]);
         const code = await state.web3.t3rm.code(args[1]);
@@ -496,7 +496,7 @@ const cmds = {
       t3rm.writeln(`Package ${c.yellowBright(args[1])} not found.`);
       t3rm.writeln("");
       return exit();
-    } else if (args[0] === "token") {
+    } else if (args[0] === "token" && args.length === 2) {
       try {
         const package = await state.web3.t3rm.package(args[1]);
         const tokenID = await state.web3.t3rm.token(package);
