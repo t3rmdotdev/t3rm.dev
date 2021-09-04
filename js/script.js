@@ -41,7 +41,7 @@ const networks = {
   1337: {
     // Localhost
     name: "Development",
-    address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     rpc: "http://127.0.0.1:8545",
   },
 };
@@ -124,29 +124,11 @@ const setup = async () => {
   t3rm.writeln(` "Y888      ${c.redBright(`"Y8b.`)}  888     888  888  888`);
   t3rm.writeln(`       ${c.redBright(`Y88b  d88P`)}`);
   t3rm.writeln(`        ${c.redBright(`"Y8888P"`)}        https://t3rm.dev`);
-
-  try {
-    state.web3.provider = new ethers.providers.JsonRpcProvider(networks[1].rpc);
-    state.web3.t3rm = new ethers.Contract(
-      networks[1].address,
-      ABI,
-      state.web3.provider
-    );
-    const blockNumber = await state.web3.provider.getBlockNumber();
-    const blocksUntilLaunch = 13142069 - blockNumber;
-    const msgRaw =
-      blocksUntilLaunch > 0
-        ? `Launches in ${blocksUntilLaunch} blocks.`
-        : "Status: Live on Ethereum.";
-    const msg =
-      blocksUntilLaunch > 0
-        ? c.yellowBright(`Launches in ${blocksUntilLaunch} blocks.`)
-        : c.yellowBright("Status: Live on Ethereum.");
-    const msgPad = [...new Array(40 - msgRaw.length)].map((_) => " ").join("");
-    t3rm.writeln(msgPad + msg);
-  } catch (err) {
-    console.error(err);
-  }
+  t3rm.writeln(
+    c.yellowBright(
+      `            Identity unknown: Use ${c.bgYellowBright(c.black("WHOAMI"))}`
+    )
+  );
 
   t3rm.writeln("");
   t3rm.write(state.t3rm.prompt);
@@ -174,8 +156,8 @@ const clear = (screen) => {
 const exit = () => {
   state.t3rm.run = null;
   state.t3rm.prompt = "🔥 ";
-  state.t3rm.line = ''
-  state.t3rm.cursor = 0
+  state.t3rm.line = "";
+  state.t3rm.cursor = 0;
   clear();
   t3rm.write(state.t3rm.prompt);
 };
@@ -243,7 +225,9 @@ const cmds = {
   },
   freeze: async (firstRun, args) => {
     if (!state.web3.account) {
-      t3rm.writeln("Requires web3 connection.\n");
+      t3rm.writeln(
+        `Requires web3 connection. Use ${c.yellowBright("CONNECT")}\n`
+      );
       return exit();
     }
 
@@ -284,7 +268,9 @@ const cmds = {
   },
   update: async (firstRun, args) => {
     if (!state.web3.account) {
-      t3rm.writeln("Requires web3 connection.\n");
+      t3rm.writeln(
+        `Requires web3 connection. Use ${c.yellowBright("CONNECT")}\n`
+      );
       return exit();
     }
 
@@ -342,7 +328,9 @@ const cmds = {
   },
   mint: async (firstRun, args) => {
     if (!state.web3.account) {
-      t3rm.writeln("Requires web3 connection.\n");
+      t3rm.writeln(
+        `Requires web3 connection. Use ${c.yellowBright("CONNECT")}\n`
+      );
       return exit();
     }
 
@@ -599,7 +587,6 @@ const onCmd = async (data) => {
           "ipfs://"
         )[1];
         const metaJson = await (await fetch(ipfsUrl(metaHash))).json();
-
         const codeHash = metaJson["code"].split("ipfs://")[1];
         const code = await (await fetch(ipfsUrl(codeHash))).text();
         cmds[cmd] = eval(`async (firstRun, args) => {${code}}`);
@@ -609,12 +596,16 @@ const onCmd = async (data) => {
       } catch (err) {
         console.error(err);
       }
+      t3rm.writeln(
+        `Error: Unable to run package: ${c.yellowBright(`${bundle}${cmd}`)}\n`
+      );
+    } else {
+      t3rm.writeln(
+        `Requires web3 connection. Use ${c.yellowBright("CONNECT")}\n`
+      );
     }
-    t3rm.writeln(
-      `Error: Unable to run package: ${c.yellowBright(`${bundle}${cmd}`)}\n`
-    );
-    exit();
-    return;
+
+    return exit();
   }
   state.t3rm.run = cmd;
   return cmds[cmd](true, args.slice(1));
