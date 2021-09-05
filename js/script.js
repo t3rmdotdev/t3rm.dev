@@ -391,8 +391,8 @@ const cmds = {
         )}   \\${c.greenBright("$$")}    \\${c.greenBright("$$")}   \n`
       );
       t3rm.writeln(
-        `Note: All t3rm.dev native packages start with ${c.yellowBright(
-          "dev.t3rm."
+        `Note: For compatibility we RECOMMEND the default bundle prefix ${c.yellowBright(
+          "dev.t3rm._PKG_"
         )}\n`
       );
 
