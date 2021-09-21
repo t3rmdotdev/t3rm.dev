@@ -489,10 +489,11 @@ const cmds = {
         `- Verify packages with ${c.yellowBright("INFO TOKEN <id>")}.`
       );
       t3rm.writeln("- Auto-pricing targets 1 token/day. \n");
-      t3rm.writeln(c.bgRed("Always run packages from a new t3rm.dev window."));
-      t3rm.writeln(c.bgRed("Always check that the package ID matches."));
-      t3rm.writeln(c.bgRed("Always verify the author + source code. DYOR."));
-      t3rm.writeln("");
+      t3rm.writeln(c.redBright("DISCLAIMER"));
+      t3rm.writeln("1. Always run packages from a new t3rm.dev window.");
+      t3rm.writeln("2. Make sure the intended package ID matches the");
+      t3rm.writeln("tag written in the upper-right corner of screen.");
+      t3rm.writeln("3. Always verify the author + source code. DYOR.\n");
       t3rm.writeln(`Type ${c.yellowBright("LIST")} to hack the galaxy.\n`);
       return exit();
     } else if (args[0] === "pkg" && args.length === 2) {
