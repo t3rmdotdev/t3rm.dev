@@ -13,18 +13,20 @@ const ABI = [
   "function freeze(string memory) public",
 ];
 
+const projectID = "ba6069f6c1ff4bf6aa61f438e4e0fa8f";
+
 const networks = {
   1: {
     // Mainnet
     name: "Ethereum",
     address: "0x4655f41dEA823D556F237dC23691A748b7eA5697",
-    rpc: "https://mainnet.infura.io/v3/ba6069f6c1ff4bf6aa61f438e4e0fa8f",
+    rpc: `https://mainnet.infura.io/v3/${projectID}`,
   },
   4: {
     // Rinkeby
     name: "Rinkeby",
     address: "0x45Fa05bAbEb288475DeeDeaA20A703b0D91Da0F7",
-    rpc: "https://rinkeby.infura.io/v3/ba6069f6c1ff4bf6aa61f438e4e0fa8f",
+    rpc: `https://rinkeby.infura.io/v3/${projectID}`,
   },
   137: {
     // Polygon
@@ -48,7 +50,7 @@ const networks = {
 
 ethers = window.ethers.ethers;
 
-const state = {
+const INITIAL_STATE = {
   t3rm: {
     cursor: 0,
     line: "",
@@ -72,6 +74,12 @@ const state = {
   },
 };
 
+const state = {
+  t3rm: { ...INITIAL_STATE.t3rm },
+  web3: { ...INITIAL_STATE.web3 },
+  ipfs: { ...INITIAL_STATE.ipfs },
+};
+
 const web3Modal = new window.Web3Modal.default({
   cacheProvider: true,
   theme: "dark",
@@ -79,7 +87,7 @@ const web3Modal = new window.Web3Modal.default({
     walletconnect: {
       package: window.WalletConnectProvider.default,
       options: {
-        infuraId: "ba6069f6c1ff4bf6aa61f438e4e0fa8f",
+        infuraId: projectID,
       },
     },
     fortmatic: {
@@ -97,6 +105,7 @@ const t3rm = new Terminal({
   convertEol: true,
   fontSize: 14,
   scrollback: 64,
+  lineHeight: 1,
 });
 
 let bundle = "dev.t3rm.";
@@ -126,12 +135,19 @@ const setup = async () => {
   t3rm.writeln(`        ${c.redBright(`"Y8888P"`)}        https://t3rm.dev`);
   t3rm.writeln(
     c.yellowBright(
-      `            Identity unknown: Use ${c.bgYellowBright(c.black("WHOAMI"))}`
+      `        Latest Curated: ${c.bgYellowBright(
+        ` ${c.black("ART")} `
+      )} | ${c.bgYellowBright(` ${c.black("WHOAMI")} `)}`
     )
   );
 
   t3rm.writeln("");
   t3rm.write(state.t3rm.prompt);
+  state.web3.t3rm = new ethers.Contract(
+    networks[1].address,
+    ABI,
+    new ethers.providers.InfuraProvider(null, projectID)
+  );
 
   try {
     await fetch("ipfs://QmZ4tDuvesekSs4qM5ZBKpXiZGun7S2CYtEZRB3DYXkjGx");
@@ -147,6 +163,13 @@ const ipfsUrl = (hash) =>
     ? "ipfs://" + hash
     : "https://cloudflare-ipfs.com/ipfs/" + hash;
 
+const resetLine = () => {
+  state.t3rm.cmdIdx = -1;
+  state.t3rm.cursor = 0;
+  state.t3rm.line = "";
+  state.t3rm.multiline = "";
+};
+
 const clear = (screen) => {
   if (screen) t3rm.clear();
   t3rm.write(screen ? esc.eraseScreen : esc.eraseLine);
@@ -154,10 +177,7 @@ const clear = (screen) => {
 };
 
 const exit = () => {
-  state.t3rm.run = null;
-  state.t3rm.prompt = "🔥 ";
-  state.t3rm.line = "";
-  state.t3rm.cursor = 0;
+  state.t3rm = { ...INITIAL_STATE.t3rm };
   clear();
   t3rm.write(state.t3rm.prompt);
 };
@@ -391,9 +411,12 @@ const cmds = {
         )}   \\${c.greenBright("$$")}    \\${c.greenBright("$$")}   \n`
       );
       t3rm.writeln(
-        `Note: For compatibility we RECOMMEND the default bundle prefix ${c.yellowBright(
-          "dev.t3rm._PKG_"
-        )}\n`
+        `Note: We HIGHLY RECOMMEND the package prefix ${c.yellowBright(
+          "dev.t3rm."
+        )}`
+      );
+      t3rm.writeln(
+        `All native t3rm platform commands run from this namespace.\n`
       );
 
       t3rm.writeln("Mint from:");
@@ -589,6 +612,8 @@ const onCmd = async (data) => {
         const metaJson = await (await fetch(ipfsUrl(metaHash))).json();
         const codeHash = metaJson["code"].split("ipfs://")[1];
         const code = await (await fetch(ipfsUrl(codeHash))).text();
+
+        window.parent.postMessage("t3rm:package-id:" + cmd);
         cmds[cmd] = eval(`async (firstRun, args) => {${code}}`);
 
         state.t3rm.run = cmd;
@@ -725,24 +750,24 @@ const defaultOnDataHandler = async (data) => {
       ];
 
       t3rm.writeln("");
-      await onCmd(state.t3rm.line);
+      const ln = state.t3rm.line;
 
-      if (!state.t3rm.run) {
-        state.t3rm.cmdIdx = -1;
-        state.t3rm.cursor = 0;
-        state.t3rm.line = "";
-      }
+      if (!state.t3rm.run) resetLine();
+
+      await onCmd(ln);
       break;
     }
     default: {
-      const dataIn =
-        data === " " && state.t3rm.line.length > 0
-          ? " "
-          : data.replace(/[^ -~]+/g, "").trim();
-      if (!dataIn.length) return;
-      t3rm.write(dataIn);
-      state.t3rm.cursor += dataIn.length;
-      state.t3rm.line += dataIn;
+      const dataIn = data.replace(/[^ -~\r\n]+/g, "");
+      const dataLines = dataIn.match(/[^\r\n]+/g) || [];
+
+      const lastLine = dataLines.slice(-1)[0] || "";
+      state.t3rm.cursor += lastLine.length;
+      state.t3rm.line += lastLine;
+      state.t3rm.multiline = dataIn;
+      dataLines.length === 1
+        ? t3rm.write(lastLine)
+        : dataLines.forEach((ln) => t3rm.writeln(ln));
     }
   }
 };
