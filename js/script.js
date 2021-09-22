@@ -562,14 +562,14 @@ const cmds = {
 
     const cmdList = [
       ["CONNECT", "Web3 signin"],
-      ["DISCONNECT", "Web3 signout"],
+      ["MINT", "Mint NFT"],
       ["INFO", "About t3rm.dev"],
       ["INFO PKG <cmd>", "Info about <pkg>"],
       ["INFO TOKEN <id>", "Info about <id>"],
       ["LIST", "View commands"],
-      ["MINT", "Mint package"],
       ["UPDATE", "Update multihash"],
       ["FREEZE", "Lock multihash"],
+      ["DISCONNECT", "Web3 signout"],
     ];
 
     const contentCmd = cmdList
