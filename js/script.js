@@ -457,9 +457,21 @@ const cmds = {
         return exit();
       }
 
+      let mintFeeUint;
+      try {
+        mintFeeUint = await state.web3.t3rm.mintFee();
+      } catch (err) {
+        console.error(err);
+      }
+
+      const walletBal = await web3.eth.getBalance(state.web3.account);
+      if (ethers.BigNumber.from(walletBal).lt(mintFeeUint)) {
+        t3rm.writeln("Error: Insufficient funds.\n");
+        return exit();
+      }
+
       try {
         const RESERVED = "QmSbWb9HLq1jo2mef9MxsgLnQFhSZhP9Vfxkh9f7zqjLvu";
-        const mintFeeUint = await state.web3.t3rm.mintFee();
         await state.web3.t3rm.mint(args[0], RESERVED, {
           value: mintFeeUint,
         });
