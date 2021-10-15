@@ -40,6 +40,12 @@ const networks = {
     address: "0x96Ed551E794E95071B5b14968b8B954627c131C7",
     rpc: "https://matic-mumbai.chainstacklabs.com",
   },
+  42161: {
+    // Arbitrum
+    name: "Arbitrum",
+    address: "0x96Ed551E794E95071B5b14968b8B954627c131C7",
+    rpc: "https://arb1.arbitrum.io/rpc",
+  },
   1337: {
     // Localhost
     name: "Development",
